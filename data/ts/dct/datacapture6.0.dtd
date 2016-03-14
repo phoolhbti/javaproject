@@ -1,0 +1,178 @@
+<!-- datacapture6.0.dtd -->
+<!ELEMENT data-capture-requirements (ruleset)>
+<!ATTLIST data-capture-requirements
+name CDATA #IMPLIED
+dtd-system-identifier CDATA #IMPLIED
+dcr-validation (none|accept-invalid|reject-invalid) "none"
+>
+<!-- The 'dtd-system-identifier' attribute is a URI indicating the
+DTD from whence a particular data-capture-requirements was
+derived, if any.
+In TeamSite Templating, the value of this attribute is used as
+the system identifier of the document type declaration of a DCR
+if and only if that DCR's type is "xml", as defined in
+templating.cfg.
+-->
+<!ELEMENT ruleset (label?, description?,script*, root-container)>
+<!ATTLIST ruleset
+name CDATA #REQUIRED
+>
+<!ELEMENT root-container (label?,(container|item|choice)+)>
+<!ATTLIST root-container
+name CDATA #REQUIRED
+combination (and | or) "and"
+location CDATA #REQUIRED
+>
+<!ELEMENT script (#PCDATA)>
+<!ATTLIST script
+language CDATA "javascript"
+location (webserver|template-type) "webserver"
+src CDATA #IMPLIED
+>
+<!ELEMENT container (label?,
+description?,(container|item|choice)+,itemref?)>
+<!ATTLIST container
+name CDATA #REQUIRED
+combination (and | or) "and"
+min CDATA "1"
+max CDATA "1"
+default CDATA "1"
+location CDATA #IMPLIED
+refid CDATA #IMPLIED>
+<!ELEMENT choice (label?,description?,(container|item)+,itemref?)>
+<!ATTLIST choice
+name CDATA #REQUIRED
+refid CDATA #IMPLIED
+>
+<!ELEMENT itemref EMPTY>
+<!ATTLIST itemref
+label CDATA #IMPLIED
+refid CDATA #REQUIRED
+min CDATA "1"
+max CDATA "1"
+>
+<!ELEMENT item (label?, description?, (checkbox | radio | text | textarea
+| select | browser | readonly | hidden)+)>
+<!ATTLIST item
+name CDATA #REQUIRED
+rowcontinue (t|f) "f"
+min CDATA "1"
+max CDATA "1"
+default CDATA "1"
+pathid CDATA #REQUIRED
+isTitle (t|f) "f"
+>
+<!ELEMENT label (#PCDATA)>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT text (allowed?,callout?,default?) >
+<!ATTLIST text
+required (t | f) "f"
+maxlength CDATA "0"
+size CDATA "0"
+validation-regex CDATA #IMPLIED
+>
+<!-- validation-regex is a regex for validating this element -->
+<!ELEMENT textarea (allowed?,callout?,default?) >
+<!ATTLIST textarea
+required (t | f) "f"
+rows CDATA "0"
+cols CDATA "0"
+wrap (off | virtual) "off"
+validation-regex CDATA #IMPLIED
+external-editor CDATA #IMPLIED
+external-editor-config CDATA #IMPLIED
+external-editor-inline (t | f) "t"
+>
+<!-- validation-regex is a regex for validating this element -->
+<!ELEMENT browser (allowed?, callout?)>
+<!ATTLIST browser
+required (t | f) "f"
+maxlength CDATA "0"
+size CDATA "0"
+initial-dir CDATA #IMPLIED
+ceiling-dir CDATA #IMPLIED
+extns CDATA #IMPLIED
+>
+<!ELEMENT readonly (allowed?, callout?)>
+<!ELEMENT hidden (allowed?, callout?)>
+<!ATTLIST hidden
+required (t | f) "f"
+>
+<!ELEMENT checkbox (allowed?, callout?, (option|inline)+)>
+<!ATTLIST checkbox
+required (t | f) "f"
+delimiter CDATA ", "
+>
+<!ELEMENT radio (allowed?, callout?, (option|inline)+)>
+<!ATTLIST radio
+required (t | f) "f"
+>
+<!ELEMENT select (allowed?, callout?, (option|inline)+)>
+<!ATTLIST select
+required (t | f) "f"
+size CDATA "0"
+multiple (t | f) "f"
+delimiter CDATA ", "
+>
+<!-- The delimiter attribute is for multiple=t only -->
+<!ELEMENT option EMPTY>
+<!ATTLIST option
+selected (t | f) "f"
+value CDATA #IMPLIED
+label CDATA #REQUIRED
+>
+<!ELEMENT allowed (cred | and | or | not)>
+<!ELEMENT cred EMPTY>
+<!ATTLIST cred
+role CDATA #IMPLIED
+group CDATA #IMPLIED
+user CDATA #IMPLIED
+>
+<!ELEMENT and ((cred | and | or | not)+)>
+<!ELEMENT or ((cred | and | or | not)+)>
+<!ELEMENT not (cred | and | or | not)>
+<!ELEMENT default (#PCDATA)>
+<!ELEMENT callout EMPTY>
+<!ATTLIST callout
+label CDATA #REQUIRED
+url CDATA #IMPLIED
+window-features CDATA #IMPLIED
+>
+<!-- An 'inline' element should have a 'command' attribute. e.g.:
+<inline command="/bin/cat /tmp/a /tmp/b"/>
+The callout program should return a well-formed XML document.
+The document's outermost element should be a "substitution"
+element. It should contain any XML that is valid according
+to this DTD.
+That "substitution" element's contents will replace the
+"inline" element in the datacapture.cfg file.
+So, if this DCT snippet:
+<select>
+<inline command="command name" />
+</select>
+runs the "blah" callout program, and that program returns this text:
+<substitution>
+<option label="ABC" />
+<option label="123" />
+<option label="Jackson 5" />
+</substitution>
+then the DCT snippet will, after callout execution and inline
+substitution, look like:
+<select>
+<option label="ABC" />
+<option label="123" />
+<option label="Jackson 5" />
+</select>
+-->
+<!ELEMENT inline EMPTY>
+<!ATTLIST inline
+command CDATA #REQUIRED
+>
+<!--Deprecated. Use <callout> instead.
+<!ELEMENT cgi-callout EMPTY>
+<!ATTLIST cgi-callout
+label CDATA #REQUIRED
+url CDATA #IMPLIED
+window-features CDATA #IMPLIED
+>
+-->
